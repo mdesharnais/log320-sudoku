@@ -1,6 +1,8 @@
 package sudoku;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -19,7 +21,32 @@ public class Sudoku {
 			new byte[] { 0, 0, 0, 0, 8, 0, 0, 7, 9 }
 		};
 		*/
-		//*
+		/*
+		// Hard, difficulty rating 0.64
+		byte[][] puzzle = new byte[][] {
+			new byte[] { 5, 7, 4, 0, 0, 0, 1, 0, 6 },
+			new byte[] { 6, 2, 0, 0, 0, 5, 0, 0, 0 },
+			new byte[] { 1, 0, 9, 0, 6, 0, 0, 0, 0 },
+			new byte[] { 0, 0, 0, 6, 7, 0, 0, 0, 2 },
+			new byte[] { 8, 0, 0, 0, 0, 0, 0, 0, 4 },
+			new byte[] { 7, 0, 0, 0, 9, 8, 0, 0, 0 },
+			new byte[] { 0, 0, 0, 0, 5, 0, 9, 0, 1 },
+			new byte[] { 0, 0, 0, 3, 0, 0, 0, 8, 7 },
+			new byte[] { 2, 0, 7, 0, 0, 0, 4, 6, 3 }
+		};
+		byte[][] solution = new byte[][] {
+			new byte[] { 5, 7, 4, 8, 2, 9, 1, 3, 6 },
+			new byte[] { 6, 2, 8, 1, 3, 5, 7, 4, 9 },
+			new byte[] { 1, 3, 9, 4, 6, 7, 2, 5, 8 },
+			new byte[] { 3, 1, 5, 6, 7, 4, 8, 9, 2 },
+			new byte[] { 8, 9, 2, 5, 1, 3, 6, 7, 4 },
+			new byte[] { 7, 4, 6, 2, 9, 8, 3, 1, 5 },
+			new byte[] { 4, 8, 3, 7, 5, 6, 9, 2, 1 },
+			new byte[] { 9, 6, 1, 3, 4, 2, 5, 8, 7 },
+			new byte[] { 2, 5, 7, 9, 8, 1, 4, 6, 3 }
+		};
+		//*/
+		/*
 		// Hard, difficulty rating 0.69
 		byte[][] puzzle = new byte[][] {
 			new byte[] { 2, 1, 0, 0, 0, 0, 0, 7, 0 },
@@ -44,7 +71,7 @@ public class Sudoku {
 			new byte[] { 5, 9, 6, 4, 7, 8, 2, 3, 1 }
 		};
 		//*/
-		/*
+		//*
 		// Very hard, difficulty rating 0.87
 		byte[][] puzzle = new byte[][] {
 			new byte[] { 0, 1, 0, 0, 0, 5, 9, 0, 0 },
@@ -114,56 +141,14 @@ public class Sudoku {
 				}
 				
 			}
-			builder.append("\n");
-			if ((line + 1) % 3 == 0 && line < candidates.length - 1)
-				builder.append("----------------------------------------------------------++-----------------------------------------------------------++-----------------------------------------------------------\n");
-		}
-		
-		return builder.toString();
-	}
-	
-	private enum SubGrid {
-		NORTH_WEST, NORTH,  NORTH_EST,
-		WEST,       CENTER, EST,
-		SOUTH_WEST, SOUTH,  SOUTH_EST
-	}
-	
-	private static final SubGrid[][] subGridPosition = new SubGrid[][] {
-		new SubGrid[] { SubGrid.NORTH_WEST, SubGrid.NORTH,  SubGrid.NORTH_EST },
-		new SubGrid[] { SubGrid.WEST,       SubGrid.CENTER, SubGrid.EST       },
-		new SubGrid[] { SubGrid.SOUTH_WEST, SubGrid.SOUTH,  SubGrid.SOUTH_EST },
-	};
-	
-	private static SubGrid getSubGrid(int line, int column) {
-		return subGridPosition[line / 3][column / 3];
-	}
-	
-	private static boolean[][][] promoteCandidate(int x, int y, int number, boolean[][][] candidates) {
-		boolean[][][] newCandidates = new boolean[9][9][9];
-		SubGrid subGrid = getSubGrid(x, y);
-		
-		for (int i = 0; i < newCandidates.length; ++i) {
-			for (int j = 0; j < newCandidates[i].length; ++j) {
-				boolean sameSubGrid = getSubGrid(i, j) == subGrid;
-				boolean sameLine = i == x;
-				boolean sameColumn = j == y;
-				for (int k = 0; k < newCandidates[i][j].length; ++k) {
-					boolean sameNumber = k == number - 1;
-					
-					if (sameLine && sameColumn && sameNumber && sameSubGrid)
-						newCandidates[i][j][k] = true;
-					else if ((sameLine && sameColumn && !sameNumber && sameSubGrid)
-							|| (sameLine && !sameColumn && sameNumber)
-							|| (!sameLine && sameColumn && sameNumber)
-							|| (!sameLine && sameNumber && sameSubGrid))
-						newCandidates[i][j][k] = false;
-					else
-						newCandidates[i][j][k] = candidates[i][j][k];
-				}
+			if (line < candidates.length - 1) {
+				builder.append("\n");
+				if ((line + 1) % 3 == 0)
+					builder.append("----------------------------------------------------------++-----------------------------------------------------------++-----------------------------------------------------------\n");
 			}
 		}
 		
-		return newCandidates;
+		return builder.toString();
 	}
 	
 	private static boolean[][][] findCandidates(byte[][] puzzle) {
@@ -180,42 +165,27 @@ public class Sudoku {
 		for (int line = 0; line < puzzle.length; ++line) {
 			for (int column = 0; column < puzzle[line].length; ++column) {
 				if (puzzle[line][column] != 0) {
-					candidates = promoteCandidate(line, column, puzzle[line][column], candidates);
+					candidates = Technique.promoteCandidate(line, column, puzzle[line][column], candidates);
 				}
 			}
 		}
+
+		System.out.println(printCandidates(candidates));
 		
-		// Now, we can check each sub-grid for a number that have only one possible position
+		List<Technique> techniques = Arrays.asList(
+			new UniqueCandidateSubGridTechnique(),
+			new UniqueCandidateLineTechnique(),
+			new UniqueCandidateColumnTechnique(),
+			new SinglePossibleLineTechnique(),
+			new AlreadyFoundTechnique());
+		
 		boolean[][][] lastPass;
-		
 		do {
 			lastPass = candidates;
-			for (int lineFirst = 0, lineLast = 3; lineLast <= puzzle.length; lineFirst += 3, lineLast += 3) {
-				for (int columnFirst = 0, columnLast = 3; columnLast <= puzzle.length; columnFirst += 3, columnLast += 3) {
-					Map<Integer,Pair<Integer,Integer>> numberPosition = new TreeMap<Integer,Pair<Integer,Integer>>();
-					
-					for (int line = lineFirst; line < lineLast; ++line) {
-						for (int column = columnFirst; column < columnLast; ++column) {
-							for (int i = 0; i < candidates[line][column].length; ++i) {
-								if (candidates[line][column][i]) {
-									if (numberPosition.containsKey(i + 1)) {
-										numberPosition.put(i + 1, null);
-									} else {
-										numberPosition.put(i + 1, new Pair<Integer,Integer>(line, column));
-									}
-								}
-							}
-						}
-					}
-					
-					for (Map.Entry<Integer,Pair<Integer,Integer>> entry : numberPosition.entrySet()) {
-						if (entry.getValue() != null) {
-							int line = entry.getValue().item1;
-							int column = entry.getValue().item2;
-							candidates = promoteCandidate(line, column, entry.getKey(), candidates);
-						}
-					}
-				}
+			for (Technique t : techniques) {
+				candidates = t.apply(candidates);
+				System.out.println(printCandidates(candidates));
+				System.out.println("==========");
 			}
 		} while (!Utils.equals(lastPass,candidates));
 		
