@@ -1,26 +1,25 @@
 package sudoku;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
 
 public class Sudoku {
 	public static void main(String[] args) {
-		/*
-		byte[][] puzzle = new byte[][] {
-			new byte[] { 5, 3, 0, 0, 7, 0, 0, 0, 0 },
-			new byte[] { 6, 0, 0, 1, 9, 5, 0, 0, 0 },
-			new byte[] { 0, 9, 8, 0, 0, 0, 0, 6, 0 },
-			new byte[] { 8, 0, 0, 0, 6, 0, 0, 0, 3 },
-			new byte[] { 4, 0, 0, 8, 0, 3, 0, 0, 1 },
-			new byte[] { 7, 0, 0, 0, 2, 0, 0, 0, 6 },
-			new byte[] { 0, 6, 0, 0, 0, 0, 2, 8, 0 },
-			new byte[] { 0, 0, 0, 4, 1, 9, 0, 0, 5 },
-			new byte[] { 0, 0, 0, 0, 8, 0, 0, 7, 9 }
+		
+		
+		// Hardest bitchin' puzzle
+		byte[][] puzzle = new byte[][] { 
+			new byte[] { 8, 0, 8, 0, 0, 0, 3, 0, 0 },
+			new byte[] { 0, 0, 0, 2, 0, 1, 0, 0, 0 }, 
+			new byte[] { 5, 0, 0, 0, 0, 0, 0, 0, 0 },
+			new byte[] { 0, 4, 0, 0, 0, 0, 0, 2, 6 }, 
+			new byte[] { 3, 0, 0, 0, 8, 0, 0, 0, 0 },
+			new byte[] { 0, 0, 0, 1, 0, 0, 0, 9, 0 }, 
+			new byte[] { 0, 9, 0, 6, 0, 0, 0, 0, 4 },
+			new byte[] { 0, 0, 0, 0, 7, 0, 5, 0, 0 }, 
+			new byte[] { 0, 0, 0, 0, 0, 0, 0, 0, 0 } 
 		};
-		*/
+		//*/
 		/*
 		// Hard, difficulty rating 0.64
 		byte[][] puzzle = new byte[][] {
@@ -71,7 +70,8 @@ public class Sudoku {
 			new byte[] { 5, 9, 6, 4, 7, 8, 2, 3, 1 }
 		};
 		//*/
-		//*
+		// *
+		/*
 		// Very hard, difficulty rating 0.87
 		byte[][] puzzle = new byte[][] {
 			new byte[] { 0, 1, 0, 0, 0, 5, 9, 0, 0 },
@@ -96,21 +96,42 @@ public class Sudoku {
 			new byte[] { 9, 2, 6, 1, 5, 4, 3, 7, 8 }
 		};
 		//*/
+
+		// System.out.println(printSudoku(puzzle));
+		// System.out.println(printCandidates(findCandidates(puzzle)));
 		
-		System.out.println(printSudoku(puzzle));
-		System.out.println(printCandidates(findCandidates(puzzle)));
+		long start = 0;
+		long stop = 0;
+		
+		BacktrackingTechnique bt = new BacktrackingTechnique(puzzle);
+
+		try {
+			start = System.nanoTime();
+			bt.solve();
+		} catch (SolutionFoundException e) {			
+			System.out.println(Sudoku.printSudoku(bt.getSolution()));
+		} catch (SolutionNotFoundException e) {
+			System.err.println("Nopenopenope.");
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			stop = System.nanoTime();
+			System.out.println((double) (stop - start) / 1000000000);
+		}
+		
+
 	}
-	
-	private static String printSudoku(byte[][] puzzle) {
+
+	public static String printSudoku(byte[][] puzzle) {
 		StringBuilder builder = new StringBuilder();
-		
+
 		for (int line = 0; line < puzzle.length; ++line) {
 			for (int row = 0; row < puzzle[line].length; ++row) {
 				if (puzzle[line][row] == 0)
 					builder.append("  ");
 				else
 					builder.append(puzzle[line][row] + " ");
-				
+
 				if ((row + 1) % 3 == 0 && row < puzzle[line].length - 1)
 					builder.append("| ");
 			}
@@ -118,13 +139,13 @@ public class Sudoku {
 			if ((line + 1) % 3 == 0 && line < puzzle.length - 1)
 				builder.append("------+-------+------\n");
 		}
-		
+
 		return builder.toString();
 	}
-	
-	private static String printCandidates(boolean[][][] candidates) {
+
+	public static String printCandidates(boolean[][][] candidates) {
 		StringBuilder builder = new StringBuilder();
-		
+
 		for (int line = 0; line < candidates.length; ++line) {
 			for (int column = 0; column < candidates[line].length; ++column) {
 				for (int i = 0; i < candidates[line][column].length; ++i) {
@@ -139,29 +160,31 @@ public class Sudoku {
 					else
 						builder.append("| ");
 				}
-				
+
 			}
 			if (line < candidates.length - 1) {
 				builder.append("\n");
 				if ((line + 1) % 3 == 0)
-					builder.append("----------------------------------------------------------++-----------------------------------------------------------++-----------------------------------------------------------\n");
+					builder
+						.append("----------------------------------------------------------++-----------------------------------------------------------++-----------------------------------------------------------\n");
 			}
 		}
-		
+
 		return builder.toString();
 	}
-	
+
 	private static boolean[][][] findCandidates(byte[][] puzzle) {
 		boolean[][][] candidates = new boolean[9][9][9];
-		
-		// By default, every number is a candidate 
+
+		// By default, every number is a candidate
 		for (boolean[][] line : candidates) {
 			for (boolean[] row : line) {
 				Utils.memset(row, true);
 			}
 		}
-		
-		// Next, we remove every but one candidate when we already have the anwser and remove the number from the row/col
+
+		// Next, we remove every but one candidate when we already have the
+		// answer and remove the number from the row/col
 		for (int line = 0; line < puzzle.length; ++line) {
 			for (int column = 0; column < puzzle[line].length; ++column) {
 				if (puzzle[line][column] != 0) {
@@ -171,14 +194,12 @@ public class Sudoku {
 		}
 
 		System.out.println(printCandidates(candidates));
-		
-		List<Technique> techniques = Arrays.asList(
-			new UniqueCandidateSubGridTechnique(),
-			new UniqueCandidateLineTechnique(),
-			new UniqueCandidateColumnTechnique(),
-			new SinglePossibleLineTechnique(),
-			new AlreadyFoundTechnique());
-		
+		System.out.println("==========");
+
+		List<Technique> techniques = Arrays.asList(new UniqueCandidateSubGridTechnique(),
+			new UniqueCandidateLineTechnique(), new UniqueCandidateColumnTechnique(),
+			new SinglePossibleLineTechnique(), new AlreadyFoundTechnique());
+
 		boolean[][][] lastPass;
 		do {
 			lastPass = candidates;
@@ -187,9 +208,8 @@ public class Sudoku {
 				System.out.println(printCandidates(candidates));
 				System.out.println("==========");
 			}
-		} while (!Utils.equals(lastPass,candidates));
-		
-		
+		} while (!Utils.equals(lastPass, candidates));
+
 		return candidates;
 	}
 }
