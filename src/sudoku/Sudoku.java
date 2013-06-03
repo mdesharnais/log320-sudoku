@@ -9,7 +9,7 @@ public class Sudoku {
 		
 		// Hardest bitchin' puzzle
 		byte[][] puzzle = new byte[][] { 
-			new byte[] { 8, 0, 8, 0, 0, 0, 3, 0, 0 },
+			new byte[] { 7, 0, 8, 0, 0, 0, 3, 0, 0 },
 			new byte[] { 0, 0, 0, 2, 0, 1, 0, 0, 0 }, 
 			new byte[] { 5, 0, 0, 0, 0, 0, 0, 0, 0 },
 			new byte[] { 0, 4, 0, 0, 0, 0, 0, 2, 6 }, 
@@ -103,21 +103,26 @@ public class Sudoku {
 		long start = 0;
 		long stop = 0;
 		
-		BacktrackingTechnique bt = new BacktrackingTechnique(puzzle);
-
+		try { // -XX:+AggressiveOpts -XX:CompileThreshold=1
+			new BacktrackingTechnique(puzzle).solve();
+		} catch (Exception e) { }
+		
+		BacktrackingTechnique b = new BacktrackingTechnique(puzzle);
+		
+		start = System.nanoTime();
+		
 		try {
-			start = System.nanoTime();
-			bt.solve();
-		} catch (SolutionFoundException e) {			
-			System.out.println(Sudoku.printSudoku(bt.getSolution()));
+			b.solve();
 		} catch (SolutionNotFoundException e) {
 			System.err.println("Nopenopenope.");
+		} catch (SolutionFoundException e) {
+			System.out.println(Sudoku.printSudoku(b.getSolution()));
 		} catch (Exception e) {
 			e.printStackTrace();
-		} finally {
-			stop = System.nanoTime();
-			System.out.println((double) (stop - start) / 1000000000);
 		}
+		
+		stop = System.nanoTime();
+		System.out.println((double) (stop - start) / 1000000000);
 		
 
 	}
