@@ -1,12 +1,22 @@
 package sudoku;
 
+import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 
 public class Sudoku {
+	
 	public static void main(String[] args) {
 		
+		if (args.length != 1) {
+			System.err.println("Required parameter: Sudoku file path.");
+			System.exit(-1);
+		}
 		
+		/*
 		// Hardest bitchin' puzzle
 		byte[][] puzzle = new byte[][] { 
 			new byte[] { 7, 0, 8, 0, 0, 0, 3, 0, 0 },
@@ -103,28 +113,68 @@ public class Sudoku {
 		long start = 0;
 		long stop = 0;
 		
+		byte[][] puzzle = LoadSudokuFromFile(args[0]);
+		
+		if (puzzle == null) {
+			System.err.println("Could not load puzzle.");
+			System.exit(-2);
+			return;
+		}
+		
 		try { // -XX:+AggressiveOpts -XX:CompileThreshold=1
 			new BacktrackingTechnique(puzzle).solve();
 		} catch (Exception e) { }
 		
 		BacktrackingTechnique b = new BacktrackingTechnique(puzzle);
-		
 		start = System.nanoTime();
 		
 		try {
 			b.solve();
 		} catch (SolutionNotFoundException e) {
-			System.err.println("Nopenopenope.");
+			System.err.println("No solution found. Sorry, eh!");
 		} catch (SolutionFoundException e) {
-			System.out.println(Sudoku.printSudoku(b.getSolution()));
+			System.out.println(printSudoku(b.getSolution()));
 		} catch (Exception e) {
 			e.printStackTrace();
+		} 
+
+		stop = System.nanoTime();
+		
+		System.out.println((double) (stop - start) / 1000000 + "ms");
+	}
+	
+	public static byte[][] LoadSudokuFromFile(String filePath) {
+		
+		BufferedReader fileReader = null;
+		byte[][] puzzle = new byte[9][9];
+		
+		try {
+			fileReader = new BufferedReader(new FileReader(filePath));
+
+			for(int i = 0; i < 9; ++i) {
+				String line = fileReader.readLine();
+
+				for (int j = 0; j < 9; ++j) {
+					puzzle[i][j] = (byte)Integer.parseInt("" + line.charAt(j));
+				}
+			}
+			
+		} catch (FileNotFoundException e) {
+			System.err.println("File not found.");
+			return null;
+		} catch (IOException e) {
+			System.err.println("Error reading file line.");
+			return null;
+		} finally {
+			if (fileReader != null)
+				try {
+					fileReader.close();
+				} catch (IOException e) {
+					System.err.println("Error closing file.");
+				}
 		}
 		
-		stop = System.nanoTime();
-		System.out.println((double) (stop - start) / 1000000000);
-		
-
+		return puzzle;
 	}
 
 	public static String printSudoku(byte[][] puzzle) {

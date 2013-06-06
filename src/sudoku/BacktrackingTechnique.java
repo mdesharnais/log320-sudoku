@@ -2,8 +2,8 @@ package sudoku;
 
 public class BacktrackingTechnique {
 
-	private static byte[][] puzzle;
-	private static byte[][] solution;
+	private byte[][] puzzle;
+	private byte[][] solution;
 	boolean found = false;
 
 	public BacktrackingTechnique(byte[][] p) {
