@@ -76,10 +76,10 @@ public class SudoView extends JFrame {
 			
 		String path = fileChooser.getSelectedFile().getAbsolutePath();
 		
-		byte[][] puzzle = Sudoku.LoadSudokuFromFile(path);
+		byte[] puzzle = Sudoku.LoadSudokuFromFile(path);
 		
 		try {
-			new BacktrackingTechnique(puzzle).solve();
+			BacktrackingTechnique.solve(puzzle);
 		} catch (Exception e) { }
 		
 		long start = 0;
@@ -92,17 +92,15 @@ public class SudoView extends JFrame {
 		}
 		
 		
-		byte[][] solution = null;
+		byte[] solution = null;
 		start = System.nanoTime();
 		
 		for (int i = 0; i < n; ++i) {
-			BacktrackingTechnique b = new BacktrackingTechnique(puzzle);
-			
 			try {
-				b.solve();
+				BacktrackingTechnique.solve(puzzle);
 			} catch (SolutionNotFoundException e) {
 			} catch (SolutionFoundException e) {
-				solution = b.getSolution();
+				solution = e.solution;
 			} catch (Exception e) {
 				e.printStackTrace();
 			} 

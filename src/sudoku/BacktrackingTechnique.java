@@ -1,70 +1,93 @@
 package sudoku;
 
+import java.util.Arrays;
+
 public class BacktrackingTechnique {
 
-	private static byte[][] puzzle;
-	private static byte[][] solution;
+	private static byte[] puzzle = new byte[81];
+	private static byte[] solution;
 	boolean found = false;
 
-	public BacktrackingTechnique(byte[][] p) {
-		puzzle = p;
+	/*
+	public BacktrackingTechnique(byte[] p) {
+		System.arraycopy(p, 0, puzzle, 0, 81);
 	}
 
-	public byte[][] getSolution() {
+	public byte[] getSolution() {
 		return solution;
 	}
+	*/
 
-	private final void findCandidate(int line, int col) throws Exception {
+	private static void findCandidate(int line, int col) throws Exception {
+		int lineOffset = line*9;
+		byte temp0 = puzzle[lineOffset];
+		byte temp1 = puzzle[lineOffset + 1];
+		byte temp2 = puzzle[lineOffset + 2];
+		byte temp3 = puzzle[lineOffset + 3];
+		byte temp4 = puzzle[lineOffset + 4];
+		byte temp5 = puzzle[lineOffset + 5];
+		byte temp6 = puzzle[lineOffset + 6];
+		byte temp7 = puzzle[lineOffset + 7];
+		byte temp8 = puzzle[lineOffset + 8];
+		byte temp10 = puzzle[col];
+		byte temp11 = puzzle[9 + col];
+		byte temp12 = puzzle[18 + col];
+		byte temp13 = puzzle[27 + col];
+		byte temp14 = puzzle[36 + col];
+		byte temp15 = puzzle[45 + col];
+		byte temp16 = puzzle[54 + col];
+		byte temp17 = puzzle[63 + col];
+		byte temp18 = puzzle[72 + col];
 		int subGridLine = (line / 3) * 3;
 		int subGridCol = (col / 3) * 3;
-		byte[] currentLine = puzzle[line];
-		byte[] line0 = puzzle[0];
-		byte[] line1 = puzzle[1];
-		byte[] line2 = puzzle[2];
-		byte[] line3 = puzzle[3];
-		byte[] line4 = puzzle[4];
-		byte[] line5 = puzzle[5];
-		byte[] line6 = puzzle[6];
-		byte[] line7 = puzzle[7];
-		byte[] line8 = puzzle[8];
+		int subGridLineOffset0 = subGridLine*9;
+		int subGridLineOffset1 = (subGridLine+1)*9;
+		int subGridLineOffset2 = (subGridLine+2)*9;
+		int subGridColOffset0 = subGridCol;
+		int subGridColOffset1 = subGridCol+1;
+		int subGridColOffset2 = subGridCol+2;
+		byte temp20 = puzzle[subGridLineOffset0 + subGridColOffset0];
+		byte temp21 = puzzle[subGridLineOffset0 + subGridColOffset1];
+		byte temp22 = puzzle[subGridLineOffset0 + subGridColOffset2];
+		byte temp23 = puzzle[subGridLineOffset1 + subGridColOffset0];
+		byte temp24 = puzzle[subGridLineOffset1 + subGridColOffset1];
+		byte temp25 = puzzle[subGridLineOffset1 + subGridColOffset2];
+		byte temp26 = puzzle[subGridLineOffset2 + subGridColOffset0];
+		byte temp27 = puzzle[subGridLineOffset2 + subGridColOffset1];
+		byte temp28 = puzzle[subGridLineOffset2 + subGridColOffset2];
 		
 		for (byte candidate = 1; candidate < 10; ++candidate) {
-			if (currentLine[0] == candidate) continue;
-			if (currentLine[1] == candidate) continue;
-			if (currentLine[2] == candidate) continue;
-			if (currentLine[3] == candidate) continue;
-			if (currentLine[4] == candidate) continue;
-			if (currentLine[5] == candidate) continue;
-			if (currentLine[6] == candidate) continue;
-			if (currentLine[7] == candidate) continue;
-			if (currentLine[8] == candidate) continue;
+			if (temp0 == candidate) continue;
+			if (temp1 == candidate) continue;
+			if (temp2 == candidate) continue;
+			if (temp3 == candidate) continue;
+			if (temp4 == candidate) continue;
+			if (temp5 == candidate) continue;
+			if (temp6 == candidate) continue;
+			if (temp7 == candidate) continue;
+			if (temp8 == candidate) continue;
 			
-			if (line0[col] == candidate) continue;
-			if (line1[col] == candidate) continue;
-			if (line2[col] == candidate) continue;
-			if (line3[col] == candidate) continue;
-			if (line4[col] == candidate) continue;
-			if (line5[col] == candidate) continue;
-			if (line6[col] == candidate) continue;
-			if (line7[col] == candidate) continue;
-			if (line8[col] == candidate) continue;
+			if (temp10 == candidate) continue;
+			if (temp11 == candidate) continue;
+			if (temp12 == candidate) continue;
+			if (temp13 == candidate) continue;
+			if (temp14 == candidate) continue;
+			if (temp15 == candidate) continue;
+			if (temp16 == candidate) continue;
+			if (temp17 == candidate) continue;
+			if (temp18 == candidate) continue;
 			
-			byte[] subGridLine0 = puzzle[subGridLine + 0];
-			if (subGridLine0[subGridCol + 0] == candidate) continue;
-			if (subGridLine0[subGridCol + 1] == candidate) continue;
-			if (subGridLine0[subGridCol + 2] == candidate) continue;
+			if (temp20 == candidate) continue;
+			if (temp21 == candidate) continue;
+			if (temp22 == candidate) continue;
+			if (temp23 == candidate) continue;
+			if (temp24 == candidate) continue;
+			if (temp25 == candidate) continue;
+			if (temp26 == candidate) continue;
+			if (temp27 == candidate) continue;
+			if (temp28 == candidate) continue;
 			
-			byte[] subGridLine1 = puzzle[subGridLine + 1];
-			if (subGridLine1[subGridCol + 0] == candidate) continue;
-			if (subGridLine1[subGridCol + 1] == candidate) continue;
-			if (subGridLine1[subGridCol + 2] == candidate) continue;
-			
-			byte[] subGridLine2 = puzzle[subGridLine + 1];
-			if (subGridLine2[subGridCol + 0] == candidate) continue;
-			if (subGridLine2[subGridCol + 1] == candidate) continue;
-			if (subGridLine2[subGridCol + 2] == candidate) continue;
-			
-			currentLine[col] = candidate;
+			puzzle[lineOffset + col] = candidate;
 			
 			if (col < 8)
 				solve(line, col + 1);
@@ -73,31 +96,29 @@ public class BacktrackingTechnique {
 		}
 	}
 
-	private final static boolean isPuzzleComplete(byte[][] solutionToCheck) {
-		for (int line = 0; line < 9; ++line) {
-			for (int column = 0; column < 9; ++column) {
-				if (solutionToCheck[line][column] == 0)
-					return false;
-			}
+	private static boolean isPuzzleComplete(byte[] solutionToCheck) {
+		for (int i = 0; i < 81; ++i) {
+			if (solutionToCheck[i] == 0)
+				return false;
 		}
 		
 		return true;
 	}
 
-	public final void solve() throws Exception {
+	public static void solve(byte[] p) throws Exception {
+		System.arraycopy(p, 0, puzzle, 0, 81);
 		solve(0, 0);
 		
 		if (!isPuzzleComplete(puzzle))
 			throw new SolutionNotFoundException();
 	}
 
-	private final void solve(int line, int col) throws Exception {
+	private static void solve(int line, int col) throws Exception {
 		if (line > 8) {
-			solution = puzzle;
-			throw new SolutionFoundException();
+			throw new SolutionFoundException(puzzle);
 		}
 
-		if (puzzle[line][col] != 0) {
+		if (puzzle[line*9 + col] != 0) {
 			if (col < 8)
 				solve(line, col + 1);
 			else
@@ -105,7 +126,7 @@ public class BacktrackingTechnique {
 		} else {
 
 			findCandidate(line, col);
-			puzzle[line][col] = 0;
+			puzzle[line*9 + col] = 0;
 		}
 
 	}

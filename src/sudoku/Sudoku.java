@@ -112,10 +112,10 @@ public class Sudoku {
 		view.setVisible(true);
 	}
 	
-	public static byte[][] LoadSudokuFromFile(String filePath) {
+	public static byte[] LoadSudokuFromFile(String filePath) {
 		
 		BufferedReader fileReader = null;
-		byte[][] puzzle = new byte[9][9];
+		byte[] puzzle = new byte[81];
 		
 		try {
 			fileReader = new BufferedReader(new FileReader(filePath));
@@ -124,7 +124,7 @@ public class Sudoku {
 				String line = fileReader.readLine();
 
 				for (int j = 0; j < 9; ++j) {
-					puzzle[i][j] = (byte)Integer.parseInt("" + line.charAt(j));
+					puzzle[i*9 + j] = (byte)Integer.parseInt("" + line.charAt(j));
 				}
 			}
 			
@@ -161,6 +161,27 @@ public class Sudoku {
 			}
 			builder.append("\n");
 			if ((line + 1) % 3 == 0 && line < puzzle.length - 1)
+				builder.append("------+-------+------\n");
+		}
+
+		return builder.toString();
+	}
+	
+	public static String printSudoku(byte[] puzzle) {
+		StringBuilder builder = new StringBuilder();
+
+		for (int x = 0; x < 9; ++x) {
+			for (int y = 0; y < 9; ++y) {
+				if (puzzle[x*9 + y] == 0)
+					builder.append("  ");
+				else
+					builder.append(puzzle[x*9 + y] + " ");
+
+				if ((y + 1) % 3 == 0 && y < 8)
+					builder.append("| ");
+			}
+			builder.append("\n");
+			if ((x + 1) % 3 == 0 && x < 8)
 				builder.append("------+-------+------\n");
 		}
 
