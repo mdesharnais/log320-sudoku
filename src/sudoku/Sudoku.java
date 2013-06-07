@@ -4,17 +4,10 @@ import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.List;
 
 public class Sudoku {
 	
 	public static void main(String[] args) {
-		
-		if (args.length != 1) {
-			System.err.println("Required parameter: Sudoku file path.");
-			System.exit(-1);
-		}
 		
 		/*
 		// Hardest bitchin' puzzle
@@ -109,38 +102,14 @@ public class Sudoku {
 
 		// System.out.println(printSudoku(puzzle));
 		// System.out.println(printCandidates(findCandidates(puzzle)));
-		
-		long start = 0;
-		long stop = 0;
-		
-		byte[][] puzzle = LoadSudokuFromFile(args[0]);
-		
-		if (puzzle == null) {
-			System.err.println("Could not load puzzle.");
-			System.exit(-2);
-			return;
-		}
-		
-		try { // -XX:+AggressiveOpts -XX:CompileThreshold=1
-			new BacktrackingTechnique(puzzle).solve();
-		} catch (Exception e) { }
-		
-		BacktrackingTechnique b = new BacktrackingTechnique(puzzle);
-		start = System.nanoTime();
-		
-		try {
-			b.solve();
-		} catch (SolutionNotFoundException e) {
-			System.err.println("No solution found. Sorry, eh!");
-		} catch (SolutionFoundException e) {
-			System.out.println(printSudoku(b.getSolution()));
-		} catch (Exception e) {
-			e.printStackTrace();
-		} 
 
-		stop = System.nanoTime();
 		
-		System.out.println((double) (stop - start) / 1000000 + "ms");
+		SudoView view = new SudoView();
+		
+		if (args.length > 0) 
+			view.setN(Integer.parseInt(args[0]));
+		
+		view.setVisible(true);
 	}
 	
 	public static byte[][] LoadSudokuFromFile(String filePath) {
@@ -228,6 +197,7 @@ public class Sudoku {
 		return builder.toString();
 	}
 
+	/*
 	private static boolean[][][] findCandidates(byte[][] puzzle) {
 		boolean[][][] candidates = new boolean[9][9][9];
 
@@ -267,4 +237,5 @@ public class Sudoku {
 
 		return candidates;
 	}
+	*/
 }

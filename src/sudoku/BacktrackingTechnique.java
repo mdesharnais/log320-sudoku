@@ -2,8 +2,8 @@ package sudoku;
 
 public class BacktrackingTechnique {
 
-	private byte[][] puzzle;
-	private byte[][] solution;
+	private static byte[][] puzzle;
+	private static byte[][] solution;
 	boolean found = false;
 
 	public BacktrackingTechnique(byte[][] p) {
@@ -18,6 +18,15 @@ public class BacktrackingTechnique {
 		int subGridLine = (line / 3) * 3;
 		int subGridCol = (col / 3) * 3;
 		byte[] currentLine = puzzle[line];
+		byte[] line0 = puzzle[0];
+		byte[] line1 = puzzle[1];
+		byte[] line2 = puzzle[2];
+		byte[] line3 = puzzle[3];
+		byte[] line4 = puzzle[4];
+		byte[] line5 = puzzle[5];
+		byte[] line6 = puzzle[6];
+		byte[] line7 = puzzle[7];
+		byte[] line8 = puzzle[8];
 		
 		for (byte candidate = 1; candidate < 10; ++candidate) {
 			if (currentLine[0] == candidate) continue;
@@ -30,15 +39,15 @@ public class BacktrackingTechnique {
 			if (currentLine[7] == candidate) continue;
 			if (currentLine[8] == candidate) continue;
 			
-			if (puzzle[0][col] == candidate) continue;
-			if (puzzle[1][col] == candidate) continue;
-			if (puzzle[2][col] == candidate) continue;
-			if (puzzle[3][col] == candidate) continue;
-			if (puzzle[4][col] == candidate) continue;
-			if (puzzle[5][col] == candidate) continue;
-			if (puzzle[6][col] == candidate) continue;
-			if (puzzle[7][col] == candidate) continue;
-			if (puzzle[8][col] == candidate) continue;
+			if (line0[col] == candidate) continue;
+			if (line1[col] == candidate) continue;
+			if (line2[col] == candidate) continue;
+			if (line3[col] == candidate) continue;
+			if (line4[col] == candidate) continue;
+			if (line5[col] == candidate) continue;
+			if (line6[col] == candidate) continue;
+			if (line7[col] == candidate) continue;
+			if (line8[col] == candidate) continue;
 			
 			byte[] subGridLine0 = puzzle[subGridLine + 0];
 			if (subGridLine0[subGridCol + 0] == candidate) continue;
