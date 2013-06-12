@@ -8,6 +8,13 @@ public class Main {
 	public static boolean isDebugging = false;
 	
 	public static void main(String[] args) {
+		SudoView view = new SudoView();
+		
+		if (args.length > 0) 
+			view.setN(Integer.parseInt(args[0]));
+		
+		view.setVisible(true);
+		
 		//*
         try {
     		solve(new byte[] {
@@ -25,8 +32,8 @@ public class Main {
 		} catch (InterruptedException e1) {
 			e1.printStackTrace();
 		}
-		//*/
-        
+		//
+        /*
 		byte[] puzzle = new byte[] {
 			1, 0, 7, 0, 0, 0, 0, 0, 0,
 			0, 0, 0, 0, 2, 5, 0, 4, 0,
@@ -57,10 +64,10 @@ public class Main {
 			System.err.println("No solution found. Sorry, eh!");
 		}
 		
-		System.out.println("Temps moyen : " + ((double) (stop - start)) / 1000000 / n + "ms");
+		System.out.println("Temps moyen : " + ((double) (stop - start)) / 1000000 / n + "ms"); */
 	}
 	
-	private static byte[] solve(byte[] puzzle) {
+	public static byte[] solve(byte[] puzzle) {
 		boolean[] candidates = new boolean[729];
 
 		// By default, every number is a candidate

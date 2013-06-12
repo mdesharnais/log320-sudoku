@@ -5,6 +5,7 @@ import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.Arrays;
 
 import javax.swing.GroupLayout;
 import javax.swing.JButton;
@@ -92,36 +93,31 @@ public class SudoView extends JFrame {
 		}
 		
 		
-		byte[] solution = null;
-		start = System.nanoTime();
-		
+		byte[][] puzzles = new byte[n][];
 		for (int i = 0; i < n; ++i) {
-			try {
-				BacktrackingTechnique.solve(puzzle);
-			} catch (SolutionNotFoundException e) {
-			} catch (SolutionFoundException e) {
-				solution = e.solution;
-			} catch (Exception e) {
-				e.printStackTrace();
-			} 
+			puzzles[i] = Arrays.copyOf(puzzle, puzzle.length);
 		}
-
+		
+		byte[] solution = null;
+		
+		start = System.nanoTime();
+		for (int i = 0; i < n; ++i)
+			solution = Main.solve(puzzles[i]);
 		stop = System.nanoTime();
 		
 		if (solution != null) {
 			System.out.println(Sudoku.printSudoku(solution));
-			System.out.println("Résolu " + n + " fois");
 		} else {
 			System.err.println("No solution found. Sorry, eh!");
 		}
 		
-		System.out.println("Temps moyen : " + (double) (stop - start) / 1000000 / n + "ms");
+		System.out.println("Temps moyen : " + ((double) (stop - start)) / 1000000 / n + "ms");
 		this.btnRun.setEnabled(true);
 		this.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
 	}
 
 	void close() {
-		System.exit(0);
+		this.dispose();
 	}
 
 }
