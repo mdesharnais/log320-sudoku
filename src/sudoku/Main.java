@@ -32,39 +32,6 @@ public class Main {
 		} catch (InterruptedException e1) {
 			e1.printStackTrace();
 		}
-		//
-        /*
-		byte[] puzzle = new byte[] {
-			1, 0, 7, 0, 0, 0, 0, 0, 0,
-			0, 0, 0, 0, 2, 5, 0, 4, 0,
-			0, 0, 0, 0, 0, 3, 0, 0, 0,
-			0, 0, 0, 0, 0, 0, 0, 0, 7,
-			0, 3, 0, 0, 4, 0, 0, 0, 0,
-			0, 0, 0, 0, 0, 0, 8, 0, 1,
-			0, 5, 0, 0, 0, 0, 0, 2, 0,
-			0, 0, 8, 1, 0, 0, 0, 0, 0,
-			0, 0, 0, 0, 0, 2, 0, 0, 6
-		};
-		final int n = 10;
-		byte[][] puzzles = new byte[n][];
-		for (int i = 0; i < n; ++i) {
-			puzzles[i] = Arrays.copyOf(puzzle, puzzle.length);
-		}
-		
-		byte[] solution = null;
-		
-		long start = System.nanoTime();
-		for (int i = 0; i < n; ++i)
-			solution = solve(puzzles[i]);
-		long stop = System.nanoTime();
-		
-		if (solution != null) {
-			System.out.println(Sudoku.printSudoku(solution));
-		} else {
-			System.err.println("No solution found. Sorry, eh!");
-		}
-		
-		System.out.println("Temps moyen : " + ((double) (stop - start)) / 1000000 / n + "ms"); */
 	}
 	
 	public static byte[] solve(byte[] puzzle) {

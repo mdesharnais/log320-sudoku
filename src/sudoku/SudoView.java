@@ -79,10 +79,6 @@ public class SudoView extends JFrame {
 		
 		byte[] puzzle = Sudoku.LoadSudokuFromFile(path);
 		
-		try {
-			BacktrackingTechnique.solve(puzzle);
-		} catch (Exception e) { }
-		
 		long start = 0;
 		long stop = 0;
 		
